@@ -14,7 +14,8 @@
                              name="base">
                     <div class="m-second-main base-information">
                         <div class="base-form">
-                            <div class="base-title">设备信息</div>
+                            <div class="base-title">设备信息
+                            </div>
                             <el-form ref="form"
                                      label-width="185px"
                                      size="mini">
@@ -65,7 +66,12 @@
                     <div v-if="machine.type == 1"
                          class="m-second-main base-information">
                         <div class="base-table">
-                            <div class="base-title">实时状态</div>
+                            <div class="base-title">实时状态
+                                <el-link type="primary"
+                                         @click="dialogChartVisible = true">[查看图表]
+                                    <i class="el-icon-view el-icon--right"></i>
+                                </el-link>
+                            </div>
                             <div class="time-status w-530">
                                 <table border="0"
                                        cellspacing="0"
@@ -173,7 +179,12 @@
                     <div v-if="machine.type == 2"
                          class="m-second-main base-information">
                         <div class="base-table">
-                            <div class="base-title">实时状态</div>
+                            <div class="base-title">实时状态
+                                <el-link type="primary"
+                                         @click="dialogChartVisible = true">[查看图表]
+                                    <i class="el-icon-view el-icon--right"></i>
+                                </el-link>
+                            </div>
                             <div class="time-status w-530">
                                 <table border="0"
                                        cellspacing="0"
@@ -294,6 +305,16 @@
             </el-tabs>
 
         </div>
+        <el-dialog class="chart-dialog"
+                   title="dialogChart"
+                   :visible.sync="dialogChartVisible">
+            <div class="data-chart">
+                <div>
+                    <chart style="width:100%;height:600px;"
+                           :options="options"></chart>
+                </div>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -301,9 +322,30 @@
 import { basicDetail, apparatus, faultAlarm } from '../../../../../../api/index.js';
 import dtStatus from '../../../../../../common/utils/diantiStatus.js';
 import ftStatus from '../../../../../../common/utils/futiStatus.js';
+
+import ECharts from 'vue-echarts';
+import 'echarts/lib/chart/bar'
+import 'echarts/lib/chart/line'
+import 'echarts/lib/chart/pie'
+import 'echarts/lib/chart/map'
+import 'echarts/lib/chart/radar'
+import 'echarts/lib/chart/scatter'
+import 'echarts/lib/chart/effectScatter'
+import 'echarts/lib/component/tooltip'
+import 'echarts/lib/component/polar'
+import 'echarts/lib/component/geo'
+import 'echarts/lib/component/legend'
+import 'echarts/lib/component/title'
+import 'echarts/lib/component/visualMap'
+import 'echarts/lib/component/dataset'
 export default {
+    components: {
+        chart: ECharts
+    },
     data() {
         return {
+            tm: null,
+            dialogChartVisible: false,
             activeSecondName: 'base',
             tableData: [{
                 runTime: '1200小时',
@@ -318,7 +360,56 @@ export default {
             alarmList: [],
             traceability: {},
             sbData: {},
-            appStatus: {}
+            appStatus: {},
+            options: {
+                color: ['#3398DB'],
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                        type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                    }
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis: [
+                    {
+                        type: 'category',
+                        data: [],
+                        axisTick: {
+                            alignWithLabel: true
+                        },
+                        axisLabel: {
+                            textStyle: {
+                                color: '#fff',
+                                fontSize: 18,
+                            }
+                        }
+                    }
+                ],
+                yAxis: [
+                    {
+                        type: 'value',
+                        axisLabel: {
+                            textStyle: {
+                                color: '#fff',
+                                fontSize: 18,
+                            }
+                        }
+                    }
+                ],
+                series: [
+                    {
+                        // name: '直接访问',
+                        type: 'bar',
+                        barWidth: '60%',
+                        data: [10, 52, 200, 334, 390, 330, 220]
+                    }
+                ]
+            },
         };
     },
     methods: {
@@ -382,9 +473,51 @@ export default {
                     }
                 }
                 this.appStatus = appStatus;
-                console.log(this.appStatus);
+                this.getChartData(data.today_statistics);
+                // console.log(this.appStatus);
             } else {
                 this.$layer.alert(res.message);
+            }
+        },
+        getChartData(today_statistics) {
+            // console.log(today_statistics.run_time);
+            if (this.machine.type == 1) {//电梯
+                this.options.xAxis[0].data = [
+                    '运行时间',
+                    '运行次数',
+                    '开关门次数',
+                    '平层触发次数',
+                    '钢丝折弯次数',
+                    '报警触发',
+                    '运行触发',
+                    '抱闸触发',
+                    '抱闸反馈'
+                ];
+                this.options.series[0].data = [
+                    today_statistics.run_time,
+                    today_statistics.run_count,
+                    today_statistics.door_times,
+                    today_statistics.level_off_times,
+                    today_statistics.bending_count_times,
+                    today_statistics.alarm_triggers,
+                    today_statistics.run_trigger,
+                    today_statistics.lock_trigger,
+                    today_statistics.lock_feedback
+
+                ]
+            } else {//扶梯
+                this.options.xAxis[0].data = [
+                    '运行时间',
+                    '运行次数',
+                    '安全回路断开次数',
+                    '盖板打开次数'
+                ];
+                this.options.series[0].data = [
+                    today_statistics.run_time,
+                    today_statistics.explosion,
+                    today_statistics.safety_circuit,
+                    today_statistics.upper_and_lower_cover
+                ]
             }
         },
         async faultAlarm() {
@@ -415,14 +548,23 @@ export default {
         handleClick(tab, event) {
             if (tab.index == 1) {
                 this.getapparatus();
+                this.tm = setInterval(() => {
+                    this.getapparatus();
+                }, 5000);
             } else if (tab.index == 2) {
                 this.faultAlarm();
+                clearInterval(this.tm);
+            } else {
+                clearInterval(this.tm);
             }
             // console.log(tab, event);
         }
     },
     created() {
         this.basicDetail();
+    },
+    destroyed() {
+        clearInterval(this.tm);
     }
 }
 </script>
