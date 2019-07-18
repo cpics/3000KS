@@ -68,7 +68,7 @@
                         <div class="base-table">
                             <div class="base-title">实时状态
                                 <el-link type="primary"
-                                         @click="dialogChartVisible = true">[查看图表]
+                                         @click="showPop">[查看图表]
                                     <i class="el-icon-view el-icon--right"></i>
                                 </el-link>
                             </div>
@@ -181,7 +181,7 @@
                         <div class="base-table">
                             <div class="base-title">实时状态
                                 <el-link type="primary"
-                                         @click="dialogChartVisible = true">[查看图表]
+                                         @click="showPop">[查看图表]
                                     <i class="el-icon-view el-icon--right"></i>
                                 </el-link>
                             </div>
@@ -306,8 +306,18 @@
 
         </div>
         <el-dialog class="chart-dialog"
-                   title="dialogChart"
                    :visible.sync="dialogChartVisible">
+            <div class="button-tab">
+                <!--正常 #2b908f-->
+                <!--报警 #90ee7e-->
+                <!--故障 #f45b5b-->
+                <el-button :class="{'active':i+1 == cateType}"
+                           v-for="(val,i) in btns"
+                           :key="i"
+                           @click="getChartData(i+1)"
+                           type="info">{{val}}</el-button>
+
+            </div>
             <div class="data-chart">
                 <div>
                     <chart style="width:100%;height:600px;"
@@ -319,7 +329,7 @@
 </template>
 
 <script>
-import { basicDetail, apparatus, faultAlarm } from '../../../../../../api/index.js';
+import { basicDetail, apparatus, faultAlarm, popchart } from '../../../../../../api/index.js';
 import dtStatus from '../../../../../../common/utils/diantiStatus.js';
 import ftStatus from '../../../../../../common/utils/futiStatus.js';
 
@@ -345,6 +355,7 @@ export default {
     data() {
         return {
             tm: null,
+            cateType: 1,
             dialogChartVisible: false,
             activeSecondName: 'base',
             tableData: [{
@@ -354,7 +365,7 @@ export default {
                 trigNo: '1000次',
                 bendNo: '252次'
             }],
-
+            btns: [],
             machine: {},
             terminal_list: [],
             alarmList: [],
@@ -387,6 +398,11 @@ export default {
                                 color: '#fff',
                                 fontSize: 18,
                             }
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: '#fff'
+                            }
                         }
                     }
                 ],
@@ -398,6 +414,11 @@ export default {
                                 color: '#fff',
                                 fontSize: 18,
                             }
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: '#fff'
+                            }
                         }
                     }
                 ],
@@ -406,13 +427,22 @@ export default {
                         // name: '直接访问',
                         type: 'bar',
                         barWidth: '60%',
-                        data: [10, 52, 200, 334, 390, 330, 220]
+                        data: []
                     }
                 ]
             },
         };
     },
     methods: {
+        showPop() {
+            this.dialogChartVisible = true;
+            clearInterval(this.tm);
+            this.getChartData();
+            this.tm = setInterval(() => {
+                this.getChartData(); 
+            }, 5000);
+
+        },
         async basicDetail() {
             let res = await basicDetail({
                 machine_id: this.$route.params.id
@@ -473,16 +503,18 @@ export default {
                     }
                 }
                 this.appStatus = appStatus;
-                this.getChartData(data.today_statistics);
+                // this.getChartData(data.today_statistics);
                 // console.log(this.appStatus);
             } else {
                 this.$layer.alert(res.message);
             }
         },
-        getChartData(today_statistics) {
-            // console.log(today_statistics.run_time);
-            if (this.machine.type == 1) {//电梯
-                this.options.xAxis[0].data = [
+        async getChartData(type) {
+            if (type) {
+                this.cateType = type;
+            }
+            if (this.machine.type == 1) {
+                this.btns = [
                     '运行时间',
                     '运行次数',
                     '开关门次数',
@@ -492,32 +524,37 @@ export default {
                     '运行触发',
                     '抱闸触发',
                     '抱闸反馈'
-                ];
-                this.options.series[0].data = [
-                    today_statistics.run_time,
-                    today_statistics.run_count,
-                    today_statistics.door_times,
-                    today_statistics.level_off_times,
-                    today_statistics.bending_count_times,
-                    today_statistics.alarm_triggers,
-                    today_statistics.run_trigger,
-                    today_statistics.lock_trigger,
-                    today_statistics.lock_feedback
-
                 ]
-            } else {//扶梯
-                this.options.xAxis[0].data = [
+            } else {
+                this.btns = [
                     '运行时间',
                     '运行次数',
                     '安全回路断开次数',
                     '盖板打开次数'
-                ];
-                this.options.series[0].data = [
-                    today_statistics.run_time,
-                    today_statistics.explosion,
-                    today_statistics.safety_circuit,
-                    today_statistics.upper_and_lower_cover
                 ]
+            }
+            // console.log(this.btns);
+            let res = await popchart({
+                machine_id: this.$route.params.id,
+                type: this.cateType
+            });
+
+            if (res.code == 200) {
+                let data = res.data.week_data;
+                let xData = [];
+                let ValueData = [];
+
+                data.forEach(item => {
+                    xData.push(item.x_title);
+                    ValueData.push(item.y_value);
+                });
+                this.options.xAxis[0].data = xData;
+                this.options.series[0].data = ValueData;
+
+
+                // console.log(res.data);
+            } else {
+                this.$layer.alert(res.message);
             }
         },
         async faultAlarm() {
@@ -548,9 +585,7 @@ export default {
         handleClick(tab, event) {
             if (tab.index == 1) {
                 this.getapparatus();
-                this.tm = setInterval(() => {
-                    this.getapparatus();
-                }, 5000);
+
             } else if (tab.index == 2) {
                 this.faultAlarm();
                 clearInterval(this.tm);
@@ -729,5 +764,8 @@ export default {
             }
         }
     }
+}
+.data-chart-box {
+    padding: 20px 0;
 }
 </style>

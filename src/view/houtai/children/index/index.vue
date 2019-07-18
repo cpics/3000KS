@@ -47,7 +47,10 @@
                     <div class="data-analysis">
                         <div class="data-title">
                             <div class="data-tit">数据分析
-                                <el-link type="primary" @click="dialogChartVisible = true">[查看大图]<i class="el-icon-view el-icon--right"></i> </el-link>
+                                <el-link type="primary"
+                                         @click="dialogChartVisible = true">[查看大图]
+                                    <i class="el-icon-view el-icon--right"></i>
+                                </el-link>
                             </div>
                             <div class="data-handle">
                                 <span>更多数据&gt;&gt;</span>
@@ -81,7 +84,6 @@
             </div>
         </div>
         <el-dialog class="chart-dialog"
-                   title="dialogChart"
                    :visible.sync="dialogChartVisible">
             <div class="data-chart">
                 <div class="button-tab">
@@ -170,11 +172,21 @@ export default {
                         textStyle: {
                             color: '#fff'
                         }
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            color: '#fff'
+                        }
                     }
                 },
                 yAxis: {
                     axisLabel: {
                         textStyle: {
+                            color: '#fff'
+                        }
+                    },
+                    axisLine: {
+                        lineStyle: {
                             color: '#fff'
                         }
                     }

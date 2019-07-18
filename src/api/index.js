@@ -47,3 +47,6 @@ export const apparatus = params => fetch.post(`${domain}/apparatus`, params);
 
 //设备故障
 export const faultAlarm = params => fetch.post(`${domain}/faultAlarm`, params);
+
+//详情页图表数据
+export const popchart = params => fetch.post(`${domain}/popchart`, params);

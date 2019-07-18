@@ -480,7 +480,7 @@ body > .el-container {
         width: 80%;
         height: 80%;
         color: #fff;
-        background: #000 !important;
+        background: #333 !important;
     }
     .el-dialog__title,
     .el-dialog__body {
