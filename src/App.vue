@@ -477,9 +477,10 @@ body > .el-container {
 }
 .chart-dialog {
     .el-dialog {
-        width: 80%;
-        height: 80%;
+        width: 100%;
+        height: 100%;
         color: #fff;
+        margin: 0 auto !important;
         background: #333 !important;
     }
     .el-dialog__title,
