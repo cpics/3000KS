@@ -104,7 +104,7 @@
                     今日数据
                 </div>
                 <div>
-                    <chart style="width:100%;height:600px;"
+                    <chart style="width:100%;height:700px;"
                            :options="options1"></chart>
                 </div>
             </div>

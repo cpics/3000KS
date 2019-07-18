@@ -320,7 +320,7 @@
             </div>
             <div class="data-chart">
                 <div>
-                    <chart style="width:100%;height:600px;"
+                    <chart style="width:100%;height:800px;"
                            :options="options"></chart>
                 </div>
             </div>
