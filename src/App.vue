@@ -486,5 +486,7 @@ body > .el-container {
     .el-dialog__body {
         color: #fff;
     }
+
+    
 }
 </style>
