@@ -311,7 +311,7 @@
                 <!--正常 #2b908f-->
                 <!--报警 #90ee7e-->
                 <!--故障 #f45b5b-->
-                <el-button :class="{'active':i+1 == cateType}"
+                <el-button class="popBtns" :class="{'active':i+1 == cateType}"
                            v-for="(val,i) in btns"
                            :key="i"
                            @click="getChartData(i+1)"
@@ -376,6 +376,9 @@ export default {
                 color: ['#3398DB'],
                 tooltip: {
                     trigger: 'axis',
+                    textStyle: {
+                        fontSize: 60,
+                    },
                     axisPointer: {            // 坐标轴指示器，坐标轴触发有效
                         type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
                     }
@@ -396,7 +399,7 @@ export default {
                         axisLabel: {
                             textStyle: {
                                 color: '#fff',
-                                fontSize: 18,
+                                fontSize: 60,
                             }
                         },
                         axisLine: {
@@ -412,7 +415,7 @@ export default {
                         axisLabel: {
                             textStyle: {
                                 color: '#fff',
-                                fontSize: 18,
+                                fontSize: 60,
                             }
                         },
                         axisLine: {
@@ -439,7 +442,7 @@ export default {
             clearInterval(this.tm);
             this.getChartData();
             this.tm = setInterval(() => {
-                this.getChartData(); 
+                this.getChartData();
             }, 5000);
 
         },
@@ -605,6 +608,9 @@ export default {
 </script>
 
 <style lang="scss">
+.popBtns{
+    font-size: 22px !important;
+}
 .fault-btn-list {
     width: 750px;
     &.w-400 {

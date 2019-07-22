@@ -90,13 +90,13 @@
                     <!--正常 #2b908f-->
                     <!--报警 #90ee7e-->
                     <!--故障 #f45b5b-->
-                    <el-button @click="changeType('today')"
+                    <el-button class="popBtns" @click="changeType('today')"
                                :class="{'active':type=='today'}"
                                type="info ">今日数据</el-button>
-                    <el-button @click="changeType('week')"
+                    <el-button class="popBtns" @click="changeType('week')"
                                :class="{'active':type=='week'}"
                                type="info ">最近一周</el-button>
-                    <el-button @click="changeType('month')"
+                    <el-button class="popBtns" @click="changeType('month')"
                                :class="{'active':type=='month'}"
                                type="info">最近一月</el-button>
                 </div>
@@ -104,7 +104,7 @@
                     今日数据
                 </div>
                 <div>
-                    <chart style="width:100%;height:700px;"
+                    <chart style="width:100%;height:750px;"
                            :options="options1"></chart>
                 </div>
             </div>
@@ -139,7 +139,9 @@ export default {
             options: {
 
                 legend: {},
-                tooltip: {},
+                tooltip: {
+
+                },
                 dataset: {
                     source: [
 
@@ -156,11 +158,16 @@ export default {
             options1: {
                 legend: {
                     textStyle: {
-                        color: '#fff'
+                        color: '#fff',
+                        fontSize: 60,
                     },
 
                 },
-                tooltip: {},
+                tooltip: {
+                    textStyle: {
+                        fontSize: 60,
+                    }
+                },
                 dataset: {
                     source: [
 
@@ -170,7 +177,8 @@ export default {
                     type: 'category',
                     axisLabel: {
                         textStyle: {
-                            color: '#fff'
+                            color: '#fff',
+                            fontSize: 60,
                         }
                     },
                     axisLine: {
@@ -182,7 +190,8 @@ export default {
                 yAxis: {
                     axisLabel: {
                         textStyle: {
-                            color: '#fff'
+                            color: '#fff',
+                            fontSize: 60,
                         }
                     },
                     axisLine: {
@@ -268,6 +277,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.popBtns{
+    font-size: 22px;
+}
 .map-survey {
     display: flex;
     width: 100%;
