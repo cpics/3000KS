@@ -323,7 +323,7 @@
             <div class="data-chart">
                 <div>
                     <chart style="width:100%;height:800px;"
-                           :options="options"></chart>
+                           :options="cateType%2 == 1 ?options :option1"></chart>
                 </div>
             </div>
         </el-dialog>
@@ -440,12 +440,47 @@ export default {
                     }
                 ]
             },
+            option1: {
+                xAxis: {
+                    type: 'category',
+                    data: [],
+                    axisLabel: {
+                        textStyle: {
+                            color: '#fff',
+                            fontSize: 50,
+                        }
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            color: '#fff'
+                        }
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    axisLabel: {
+                        textStyle: {
+                            color: '#fff',
+                            fontSize: 50,
+                        }
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            color: '#fff'
+                        }
+                    }
+                },
+                series: [{
+                    data: [],
+                    type: 'line'
+                }]
+            }
         };
     },
     methods: {
         showPop() {
             this.dialogChartVisible = true;
-            clearInterval(this.tm);
+            clearInterval(this.tt);
             // this.getChartData();
             this.intervalGetChartData();
             // this.tm = setInterval(() => {
@@ -584,7 +619,9 @@ export default {
                     ValueData.push(item.y_value);
                 });
                 this.options.xAxis[0].data = xData;
+                this.option1.xAxis.data = xData;
                 this.options.series[0].data = ValueData;
+                this.option1.series[0].data = ValueData;
 
 
                 // console.log(res.data);
@@ -641,6 +678,7 @@ export default {
     },
     destroyed() {
         clearInterval(this.tl);
+        clearInterval(this.tt);
         clearInterval(this.tm);
     }
 }
@@ -819,5 +857,6 @@ export default {
 }
 .data-chart-box {
     padding: 20px 0;
+    margin: 0 auto;
 }
 </style>
