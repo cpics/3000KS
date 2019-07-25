@@ -308,14 +308,16 @@
         <el-dialog class="chart-dialog"
                    :visible.sync="dialogChartVisible">
             <div class="button-tab">
+
+                <span>{{cateString}}</span>
                 <!--正常 #2b908f-->
                 <!--报警 #90ee7e-->
                 <!--故障 #f45b5b-->
-                <el-button class="popBtns" :class="{'active':i+1 == cateType}"
+                <!-- <el-button class="popBtns"
+                           :class="{'active':i+1 == cateType}"
                            v-for="(val,i) in btns"
                            :key="i"
-                           @click="getChartData(i+1)"
-                           type="info">{{val}}</el-button>
+                           type="info">{{val}}</el-button> -->
 
             </div>
             <div class="data-chart">
@@ -348,14 +350,18 @@ import 'echarts/lib/component/legend'
 import 'echarts/lib/component/title'
 import 'echarts/lib/component/visualMap'
 import 'echarts/lib/component/dataset'
+import { setInterval } from 'timers';
 export default {
     components: {
         chart: ECharts
     },
     data() {
         return {
+            tt: null,
+            tl: null,
             tm: null,
             cateType: 1,
+            cateString: '',
             dialogChartVisible: false,
             activeSecondName: 'base',
             tableData: [{
@@ -440,10 +446,31 @@ export default {
         showPop() {
             this.dialogChartVisible = true;
             clearInterval(this.tm);
-            this.getChartData();
-            this.tm = setInterval(() => {
-                this.getChartData();
+            // this.getChartData();
+            this.intervalGetChartData();
+            // this.tm = setInterval(() => {
+            //     this.getChartData();
+            // }, 5000);
+
+        },
+        intervalGetChartData() {
+            let index = 1;
+            let maxIndex = '';
+            if (this.machine.type == 1) {
+                maxIndex = 9;
+            } else {
+                maxIndex = 4;
+            }
+            this.getChartData(index);
+            this.tt = setInterval(() => {
+                if (index < maxIndex) {
+                    index++;
+                } else {
+                    index = 1;
+                }
+                this.getChartData(index);
             }, 5000);
+
 
         },
         async basicDetail() {
@@ -536,6 +563,11 @@ export default {
                     '盖板打开次数'
                 ]
             }
+
+
+            this.cateString = this.btns[this.cateType - 1];
+
+
             // console.log(this.btns);
             let res = await popchart({
                 machine_id: this.$route.params.id,
@@ -587,12 +619,18 @@ export default {
         },
         handleClick(tab, event) {
             if (tab.index == 1) {
-                this.getapparatus();
 
+                clearInterval(this.tl);
+                this.getapparatus();
+                this.tl = setInterval(() => {
+                    this.getapparatus();
+                }, 10000);
             } else if (tab.index == 2) {
                 this.faultAlarm();
+                clearInterval(this.tl);
                 clearInterval(this.tm);
             } else {
+                clearInterval(this.tl);
                 clearInterval(this.tm);
             }
             // console.log(tab, event);
@@ -602,13 +640,14 @@ export default {
         this.basicDetail();
     },
     destroyed() {
+        clearInterval(this.tl);
         clearInterval(this.tm);
     }
 }
 </script>
 
 <style lang="scss">
-.popBtns{
+.popBtns {
     font-size: 22px !important;
 }
 .fault-btn-list {
@@ -655,6 +694,13 @@ export default {
         margin-right: 20px;
         width: 500px;
     }
+}
+.button-tab {
+    margin: 0 auto;
+    font-size: 60px;
+    text-align: center;
+    justify-content: center;
+    width: 100%;
 }
 
 .base-pic {
