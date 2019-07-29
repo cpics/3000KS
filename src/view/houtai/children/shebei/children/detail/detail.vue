@@ -320,9 +320,10 @@
                            type="info">{{val}}</el-button> -->
 
             </div>
+            <div class="f-title">{{machine.install_address}} - {{machine.title}}</div>
             <div class="data-chart">
                 <div>
-                    <chart style="width:100%;height:800px;"
+                    <chart style="width:100%;height:700px;"
                            :options="cateType%2 == 1 ?options :option1"></chart>
                 </div>
             </div>
@@ -685,6 +686,12 @@ export default {
 </script>
 
 <style lang="scss">
+.f-title{
+    display: flex;
+    margin:0 auto;
+    justify-content: center;
+    font-size: 50px;
+}
 .popBtns {
     font-size: 22px !important;
 }
