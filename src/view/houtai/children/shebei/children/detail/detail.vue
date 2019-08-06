@@ -309,7 +309,9 @@
                    :visible.sync="dialogChartVisible">
             <div class="button-tab">
 
-                <span>{{cateString}}</span>
+                <span>{{cateString}} -
+                    <span class="f-tab-title">{{machine.install_address}} - {{machine.title}}</span>
+                </span>
                 <!--正常 #2b908f-->
                 <!--报警 #90ee7e-->
                 <!--故障 #f45b5b-->
@@ -320,12 +322,15 @@
                            type="info">{{val}}</el-button> -->
 
             </div>
-            <div class="f-title">{{machine.install_address}} - {{machine.title}}</div>
+
             <div class="data-chart">
                 <div>
-                    <chart style="width:100%;height:700px;"
+                    <chart style="width:100%;height:750px;"
                            :options="cateType%2 == 1 ?options :option1"></chart>
                 </div>
+            </div>
+            <div class="content-text">
+                {{conentString}}
             </div>
         </el-dialog>
     </div>
@@ -358,6 +363,8 @@ export default {
     },
     data() {
         return {
+            contentTxt: [],
+            conentString: '',
             tt: null,
             tl: null,
             tm: null,
@@ -591,6 +598,17 @@ export default {
                     '抱闸触发次数',
                     '抱闸反馈次数'
                 ]
+                this.contentTxt = [
+                    '运行时间：指示电梯上的部件是否到达使用年限，如：电线老化程度、变频器寿命等',
+                    '运行次数：指示某些部件的使用寿命，如：曳引机使用次数、驱动开关的寿命等',
+                    '开关门次数：指示出门机的使用寿命，以及门开关的寿命',
+                    '平层触发次数：指示出电梯运行的距离，反映曳引机的寿命',
+                    '钢丝绳折弯次数：指示出钢丝绳是否会达到折弯寿命次数',
+                    '报警触发次数：指示出是否有困人的情况，触发了报警信息',
+                    '运行触发次数：指示出运行接触器的寿命使用情况',
+                    '抱闸触发次数：指示出抱闸接触器的寿命使用情况',
+                    '抱闸反馈次数：指示出抱闸接触器的有效性，也反应寿命情况'
+                ]
             } else {
                 this.btns = [
                     '运行时间',
@@ -598,10 +616,17 @@ export default {
                     '安全回路断开次数',
                     '盖板打开次数'
                 ]
+                this.contentTxt = [
+                    '运行时间：指示扶梯上的部件是否到达使用年限，如：电线老化程度、变频器寿命等',
+                    '运行次数：指示某些部件的使用寿命，如：电机使用次数、驱动开关的寿命等',
+                    '安全回路断开次数：指示扶梯被维修或故障原因导致的安全回路断路现象，间接反映扶梯运行质量情况',
+                    '盖板打开次数：指示扶梯入口处风险情况，是维修或异常导致的盖板打开'
+                ]
             }
 
 
             this.cateString = this.btns[this.cateType - 1];
+            this.conentString = this.contentTxt[this.cateType - 1];
 
 
             // console.log(this.btns);
@@ -686,11 +711,17 @@ export default {
 </script>
 
 <style lang="scss">
-.f-title{
+.f-title {
     display: flex;
-    margin:0 auto;
+    margin: 0 auto;
     justify-content: center;
     font-size: 50px;
+}
+.content-text {
+    text-align: center;
+    justify-content: center;
+    font-size: 30px;
+    margin-top: 40px;
 }
 .popBtns {
     font-size: 22px !important;
@@ -865,5 +896,8 @@ export default {
 .data-chart-box {
     padding: 20px 0;
     margin: 0 auto;
+}
+.f-tab-title {
+    font-size: 40px;
 }
 </style>
