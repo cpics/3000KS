@@ -309,8 +309,8 @@
                    :visible.sync="dialogChartVisible">
             <div class="button-tab">
 
-                <span>{{cateString}} -
-                    <span class="f-tab-title">{{machine.install_address}} - {{machine.title}}</span>
+                <span>{{cateString}} 
+                    <span class="f-tab-title">({{machine.install_address}} - {{machine.title}})</span>
                 </span>
                 <!--正常 #2b908f-->
                 <!--报警 #90ee7e-->
@@ -720,8 +720,8 @@ export default {
 .content-text {
     text-align: center;
     justify-content: center;
-    font-size: 30px;
-    margin-top: 40px;
+    font-size: 45px;
+    margin-top: 30px;
 }
 .popBtns {
     font-size: 22px !important;
