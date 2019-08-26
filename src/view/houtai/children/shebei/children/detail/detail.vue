@@ -192,7 +192,7 @@
                                     <tbody>
                                         <tr>
                                             <td>当前状态</td>
-                                            <td>{{appStatus.now_status}}</td>
+                                            <td>{{appStatus.current_status}}</td>
                                         </tr>
                                         <tr>
                                             <td>运行方向</td>
@@ -309,7 +309,7 @@
                    :visible.sync="dialogChartVisible">
             <div class="button-tab">
 
-                <span>{{cateString}} 
+                <span>{{cateString}}
                     <span class="f-tab-title">({{machine.install_address}} - {{machine.title}})</span>
                 </span>
                 <!--正常 #2b908f-->
@@ -356,7 +356,7 @@ import 'echarts/lib/component/legend'
 import 'echarts/lib/component/title'
 import 'echarts/lib/component/visualMap'
 import 'echarts/lib/component/dataset'
-import { setInterval } from 'timers';
+import { setInterval, clearInterval } from 'timers';
 export default {
     components: {
         chart: ECharts
@@ -368,6 +368,7 @@ export default {
             tt: null,
             tl: null,
             tm: null,
+            tf: null,
             cateType: 1,
             cateString: '',
             dialogChartVisible: false,
@@ -558,6 +559,7 @@ export default {
                         system_safety_circuit: data.system_safety_circuit,
                         cover_board: data.cover_board
                     };
+                    // console.log(data.current_status, ftStatus.current_status[data.current_status]);
                     appStatus = {
                         current_status: data.current_status === '' ? '' : ftStatus.current_status[data.current_status],
                         direction: data.direction === '' ? '' : ftStatus.direction[data.direction],
@@ -575,6 +577,7 @@ export default {
                         qudonglianzhangjinzuo: data.qudonglianzhangjinzuo === '' ? '' : ftStatus.qudonglianzhangjinzuo[data.qudonglianzhangjinzuo],
                     }
                 }
+                // console.log(appStatus);
                 this.appStatus = appStatus;
                 // this.getChartData(data.today_statistics);
                 // console.log(this.appStatus);
@@ -684,15 +687,20 @@ export default {
             if (tab.index == 1) {
 
                 clearInterval(this.tl);
+                clearInterval(this.tf);
                 this.getapparatus();
                 this.tl = setInterval(() => {
                     this.getapparatus();
                 }, 10000);
             } else if (tab.index == 2) {
                 this.faultAlarm();
+                this.tf = setInterval(() => {
+                    this.faultAlarm();
+                }, 10000);
                 clearInterval(this.tl);
                 clearInterval(this.tm);
             } else {
+                clearInterval(this.tf);
                 clearInterval(this.tl);
                 clearInterval(this.tm);
             }
@@ -706,6 +714,7 @@ export default {
         clearInterval(this.tl);
         clearInterval(this.tt);
         clearInterval(this.tm);
+        clearInterval(this.tf);
     }
 }
 </script>
