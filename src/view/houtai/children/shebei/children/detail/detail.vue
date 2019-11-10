@@ -161,7 +161,7 @@
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td>{{sbData.baojingchufa}}小时</td>
+                                                <td>{{sbData.baojingchufa}}次</td>
                                                 <td>{{sbData.yunxing}}次</td>
                                                 <td>{{sbData.baozha}}次</td>
                                                 <td>{{sbData.baozhafankui}}次</td>
