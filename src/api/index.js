@@ -1,6 +1,6 @@
 import fetch from '../common/fetch/index';
 
-export const domain = '//www.365dianti.com/index/index';
+export const domain = '//holy.365dianti.com/index/index';
 // export const domain = '//192.168.222.55:91/index/index';
 
 //登录
